@@ -2,6 +2,7 @@
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 
 namespace PleskX\Api\Operator;
+
 use PleskX\Api\Struct\Mail as Struct;
 
 class Mail extends \PleskX\Api\Operator
@@ -50,4 +51,22 @@ class Mail extends \PleskX\Api\Operator
         return 'ok' === (string)$response->status;
     }
 
+    /**
+     * @return Struct\GeneralInfo[]
+     */
+    public function getAllBySiteId($siteId)
+    {
+        $response = $this->_get('get_info', 'site-id', $siteId);
+
+        $items = [];
+        if (isset($response->mail->get_info->result->mailname))
+        {
+            foreach ($response->mail->get_info->result->mailname as $mail)
+            {
+                $items[] = new Struct\GeneralInfo($mail);
+            }
+        }
+
+        return $items;
+    }
 }
