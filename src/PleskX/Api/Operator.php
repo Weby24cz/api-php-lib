@@ -90,4 +90,23 @@ class Operator
         return $items;
     }
 
+    /**
+     * @param $command
+     * @param $field
+     * @param $value
+     * @return \PleskX\Api\XmlResponse
+     */
+    protected function _get($command, $field, $value)
+    {
+        $packet = $this->_client->getPacket();
+        $getTag = $packet->addChild($this->_wrapperTag)->addChild($command);
+
+        $filterTag = $getTag->addChild('filter');
+        if (!is_null($field)) {
+            $filterTag->addChild($field, $value);
+        }
+
+        $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
+        return $response;
+    }
 }
