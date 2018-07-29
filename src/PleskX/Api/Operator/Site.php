@@ -81,4 +81,28 @@ class Site extends \PleskX\Api\Operator
         return $this->_getItems(Struct\GeneralInfo::class, 'gen_info');
     }
 
+    public function getByName($name)
+    {
+        $packet = $this->_client->getPacket();
+        $getTag = $packet->addChild($this->_wrapperTag)->addChild('get');
+
+        $filterTag = $getTag->addChild('filter');
+        $filterTag->addChild('name', $name);
+
+        $getTag->addChild('dataset')->addChild('gen_info');
+
+        $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
+
+        $items = [];
+        foreach ($response->xpath('//result') as $item)
+        {
+            $node = $item->data->gen_info;
+            $node->addChild('id', $item->id);
+
+            $items[] = new Struct\GeneralInfo($node);
+        }
+
+        return $items;
+    }
+    
 }

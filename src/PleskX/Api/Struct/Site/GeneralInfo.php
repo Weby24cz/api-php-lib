@@ -5,6 +5,9 @@ namespace PleskX\Api\Struct\Site;
 
 class GeneralInfo extends \PleskX\Api\Struct
 {
+    /** @var integer */
+    public $id;
+
     /** @var string */
     public $name;
 
@@ -20,6 +23,7 @@ class GeneralInfo extends \PleskX\Api\Struct
     public function __construct($apiResponse)
     {
         $this->_initScalarProperties($apiResponse, [
+            'id',
             'name',
             'ascii-name',
             'guid',
