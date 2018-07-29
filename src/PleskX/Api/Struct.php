@@ -20,13 +20,18 @@ abstract class Struct
      */
     protected function _initScalarProperties($apiResponse, array $properties)
     {
-        foreach ($properties as $property) {
+        if ($properties === null)
+        {
+            throw new \Exception('Variable "$properties" is NULL');
+        }
+
+        foreach ($properties as $key => $property) {
             if (is_array($property)) {
                 $classPropertyName = current($property);
-                $value = $apiResponse->{key($property)};
+                $value = isset($apiResponse->$key) ? $apiResponse->$key : null;
             } else {
                 $classPropertyName = $this->_underToCamel(str_replace('-', '_', $property));
-                $value = $apiResponse->$property;
+                $value = isset($apiResponse->$property) ? $apiResponse->$property : null;
             }
 
             $reflectionProperty = new \ReflectionProperty($this, $classPropertyName);
