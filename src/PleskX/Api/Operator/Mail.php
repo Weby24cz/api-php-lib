@@ -63,7 +63,10 @@ class Mail extends \PleskX\Api\Operator
         {
             foreach ($response->mail->get_info->result as $mail)
             {
-                $items[] = new Struct\GeneralInfo($mail->mailname);
+                if (isset($mail->mailname))
+                {
+                    $items[] = new Struct\GeneralInfo($mail->mailname);
+                }
             }
         }
 
