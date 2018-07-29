@@ -142,7 +142,14 @@ class Operator
     {
         if (is_array($values))
         {
-            $fieldNode = $node->addChild($field);
+            if (is_int($field))
+            {
+                $fieldNode = $node;
+            }
+            else
+            {
+                $fieldNode = $node->addChild($field);
+            }
 
             foreach ($values as $key => $value)
             {
