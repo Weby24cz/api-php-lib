@@ -114,14 +114,9 @@ class Mail extends \PleskX\Api\Operator
 
     public function update($values, $name, $siteId)
     {
-        if (isset($values['description']))
+        foreach ($values as $field => $value)
         {
-            $this->_update('description', $values['description'], $name, $siteId);
-        }
-
-        if (isset($values['password']) && $values['password'])
-        {
-            $this->_update('password', ['value' => $values['password']], $name, $siteId);
+            $this->_update($field, $value, $name, $siteId);
         }
     }
 }
