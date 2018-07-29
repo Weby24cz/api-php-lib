@@ -91,22 +91,67 @@ class Operator
     }
 
     /**
-     * @param $command
-     * @param $field
-     * @param $value
+     * @param      $command
+     * @param      $field
+     * @param      $value
+     * @param null $siteId
+     *
      * @return \PleskX\Api\XmlResponse
      */
-    protected function _get($command, $field, $value)
+    protected function _get($command, $field, $value, $siteId = null)
     {
         $packet = $this->_client->getPacket();
         $getTag = $packet->addChild($this->_wrapperTag)->addChild($command);
 
         $filterTag = $getTag->addChild('filter');
+
+        if ($siteId)
+        {
+            $filterTag->addChild('site-id', $siteId);
+        }
+
         if (!is_null($field)) {
             $filterTag->addChild($field, $value);
         }
 
         $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
         return $response;
+    }
+
+    public function _update($field, $value, $name, $siteId)
+    {
+        $packet = $this->_client->getPacket();
+        $info = $packet->addChild($this->_wrapperTag)->addChild('update')->addChild('set');
+
+        $filter = $info->addChild('filter');
+
+        $filter->addChild('site-id', $siteId);
+
+        $mailname = $filter->addChild('mailname');
+
+        $mailname->addChild('name', $name);
+
+        $this->createNodeTree($mailname, $field, $value);
+
+        $response = $this->_client->request($packet);
+
+        return $response;
+    }
+
+    private function createNodeTree(\SimpleXMLElement $node, $field, $values)
+    {
+        if (is_array($values))
+        {
+            $fieldNode = $node->addChild($field);
+
+            foreach ($values as $key => $value)
+            {
+                $this->createNodeTree($fieldNode, $key, $value);
+            }
+        }
+        else
+        {
+            $node->addChild($field, $values);
+        }
     }
 }

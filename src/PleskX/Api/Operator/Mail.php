@@ -72,4 +72,56 @@ class Mail extends \PleskX\Api\Operator
 
         return $items;
     }
+
+    /**
+     * @param $name
+     * @param $siteId
+     *
+     * @return Struct\GeneralInfo
+     */
+    public function getById($name, $siteId)
+    {
+        $response = $this->_get('get_info', 'name', $name, $siteId);
+
+        $items = [];
+        if (isset($response->mail->get_info->result))
+        {
+            foreach ($response->mail->get_info->result as $mail)
+            {
+                if (isset($mail->mailname))
+                {
+                    $items[] = new Struct\GeneralInfo($mail->mailname);
+                }
+            }
+        }
+
+        return $items[0];
+    }
+
+    public function rename($newName, $oldName, $siteId)
+    {
+        $packet = $this->_client->getPacket();
+        $info = $packet->addChild($this->_wrapperTag)->addChild('rename');
+
+        $info->addChild('site-id', $siteId);
+        $info->addChild('name', $oldName);
+        $info->addChild('new-name', $newName);
+
+        $response = $this->_client->request($packet);
+
+        return $response;
+    }
+
+    public function update($values, $name, $siteId)
+    {
+        if (isset($values['description']))
+        {
+            $this->_update('description', $values['description'], $name, $siteId);
+        }
+
+        if (isset($values['password']) && $values['password'])
+        {
+            $this->_update('password', ['value' => $values['password']], $name, $siteId);
+        }
+    }
 }
