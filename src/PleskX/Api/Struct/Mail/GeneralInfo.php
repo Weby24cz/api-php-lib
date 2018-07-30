@@ -22,6 +22,9 @@ class GeneralInfo extends \PleskX\Api\Struct
     /** @var string */
     public $description;
 
+    /** @var array */
+    public $forwarding;
+
     public function __construct($apiResponse)
     {
         $this->_initScalarProperties($apiResponse, [
@@ -31,5 +34,7 @@ class GeneralInfo extends \PleskX\Api\Struct
             'antivir',
             'description'
         ]);
+
+        $this->forwarding = (array) $apiResponse->forwarding;
     }
 }

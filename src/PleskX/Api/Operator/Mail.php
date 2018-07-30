@@ -81,7 +81,23 @@ class Mail extends \PleskX\Api\Operator
      */
     public function getById($name, $siteId)
     {
-        $response = $this->_get('get_info', 'name', $name, $siteId);
+        $packet = $this->_client->getPacket();
+        $getTag = $packet->addChild($this->_wrapperTag)->addChild('get_info');
+
+        $filterTag = $getTag->addChild('filter');
+
+        if ($siteId)
+        {
+            $filterTag->addChild('site-id', $siteId);
+        }
+
+        if (!is_null($name)) {
+            $filterTag->addChild('name', $name);
+        }
+
+        $getTag->addChild('forwarding');
+
+        $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
 
         $items = [];
         if (isset($response->mail->get_info->result))
@@ -94,6 +110,8 @@ class Mail extends \PleskX\Api\Operator
                 }
             }
         }
+
+
 
         return $items[0];
     }
