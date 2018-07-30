@@ -52,11 +52,26 @@ class Mail extends \PleskX\Api\Operator
     }
 
     /**
+     * @param $siteId
+     *
      * @return Struct\GeneralInfo[]
      */
     public function getAllBySiteId($siteId)
     {
-        $response = $this->_get('get_info', 'site-id', $siteId);
+        $packet = $this->_client->getPacket();
+        $getTag = $packet->addChild($this->_wrapperTag)->addChild('get_info');
+
+        $filterTag = $getTag->addChild('filter');
+
+        if ($siteId)
+        {
+            $filterTag->addChild('site-id', $siteId);
+        }
+
+        $getTag->addChild('forwarding');
+        $getTag->addChild('aliases');
+
+        $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
 
         $items = [];
         if (isset($response->mail->get_info->result))
@@ -96,6 +111,7 @@ class Mail extends \PleskX\Api\Operator
         }
 
         $getTag->addChild('forwarding');
+        $getTag->addChild('aliases');
 
         $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
 
@@ -111,9 +127,40 @@ class Mail extends \PleskX\Api\Operator
             }
         }
 
-
-
         return $items[0];
+    }
+
+    /**
+     * @param $name
+     * @param $aliases
+     * @param $siteId
+     *
+     * @return \PleskX\Api\XmlResponse
+     */
+    public function deleteAlias($name, $aliases, $siteId)
+    {
+        $packet = $this->_client->getPacket();
+        $getTag = $packet->addChild($this->_wrapperTag)->addChild('update')->addChild('remove');
+
+        $filterTag = $getTag->addChild('filter');
+
+        if ($siteId)
+        {
+            $filterTag->addChild('site-id', $siteId);
+        }
+
+        $mailname = $filterTag->addChild('mailname');
+
+        $mailname->addChild('name', $name);
+
+        foreach ($aliases as $alias)
+        {
+            $mailname->addChild('alias', $alias);
+        }
+
+        $response = $this->_client->request($packet, \PleskX\Api\Client::RESPONSE_FULL);
+
+        return $response;
     }
 
     public function rename($newName, $oldName, $siteId)
