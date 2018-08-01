@@ -68,6 +68,8 @@ class Mail extends \PleskX\Api\Operator
             $filterTag->addChild('site-id', $siteId);
         }
 
+        $getTag->addChild('mailbox');
+        $getTag->addChild('mailbox-usage');
         $getTag->addChild('forwarding');
         $getTag->addChild('aliases');
 
@@ -110,6 +112,8 @@ class Mail extends \PleskX\Api\Operator
             $filterTag->addChild('name', $name);
         }
 
+        $getTag->addChild('mailbox');
+        $getTag->addChild('mailbox-usage');
         $getTag->addChild('forwarding');
         $getTag->addChild('aliases');
 

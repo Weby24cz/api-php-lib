@@ -28,6 +28,9 @@ class GeneralInfo extends \PleskX\Api\Struct
     /** @var array */
     public $aliases;
 
+    /** @var array */
+    public $mailbox;
+
     public function __construct($apiResponse)
     {
         $this->_initScalarProperties($apiResponse, [
@@ -38,7 +41,8 @@ class GeneralInfo extends \PleskX\Api\Struct
             'description'
         ]);
 
-        $this->forwarding = (array) $apiResponse->forwarding;
-        $this->aliases    = (array) $apiResponse->alias;
+        $this->forwarding   = (array) $apiResponse->forwarding;
+        $this->aliases      = (array) $apiResponse->alias;
+        $this->mailbox      = (array) $apiResponse->mailbox;
     }
 }
